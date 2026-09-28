@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Drone Simulation (3 Scenarios)</title>
+  <link rel="stylesheet" href="S.style.css">
+
+</head>
+<body>
+<div class="wrap">
+  <canvas id="c" width="900" height="540"></canvas>
+
+  <div class="panel">
+    <div class="card">
+      <div class="row"><span class="pill">Drone Simulation</span></div>
+
+      <div class="row">
+        <label>Scenario</label>
+        <select id="scenario">
+          <option value="hover" selected>1) Takeoff + Hover (Stability Challenge)</option>
+          <option value="waypoints">2) Waypoint Navigation (Smooth Path + Wind)</option>
+          <option value="avoid">3) Obstacle Avoidance + Battery Landing</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <button id="btnReset" class="secondary">Reset</button>
+      </div>
+      <div class="row">
+        <button id="btnPlay">Play</button>
+      </div>
+
+      <div class="hint">
+        For waypoints: click on the mini-map to place points.
+        <br/>Tip: Try wind and hover height sliders!
+      </div>
+    </div>
+
+    <div class="card" id="controlsCard"></div>
+
+    <div class="card">
+      <div class="row"><label>Battery</label><div id="batteryText" class="pill">--%</div></div>
+      <div class="bar"><i id="batteryBar"></i></div>
+      <div class="row" style="margin-top:12px;">
+        <div class="pill" id="statusPill">Ready</div>
+      </div>
+      <div class="hint" id="readout" style="margin-top:10px;"></div>
+    </div>
+  </div>
+</div>
+
+<script src="S.script.js">
+</script>
+</body>
+</html>

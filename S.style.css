@@ -1,0 +1,14 @@
+ body { margin:0; background:#081021; color:#e8f0ff; font-family:system-ui, Arial; }
+    .wrap { display:flex; gap:14px; padding:14px; }
+    canvas { background:#061733; border:1px solid rgba(255,255,255,.12); border-radius:10px; }
+    .panel { width:380px; }
+    .card { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:10px; padding:12px; margin-bottom:10px; }
+    .row { display:flex; justify-content:space-between; gap:10px; margin:8px 0; align-items:center; }
+    button, select, input[type="range"] { width:100%; }
+    button { padding:10px; background:#2b6cff; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:700; }
+    button.secondary { background:#2b2f3a; border:1px solid rgba(255,255,255,.15); }
+    label { font-size:12px; opacity:.9; }
+    .bar { height:14px; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,.12); }
+    .bar > i { display:block; height:100%; width:60%; background:linear-gradient(90deg,#00e5a8,#00c2ff); }
+    .hint { font-size:12px; opacity:.85; line-height:1.35; }
+    .pill { display:inline-block; padding:4px 10px; border-radius:999px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); }

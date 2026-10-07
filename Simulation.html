@@ -1,55 +1,124 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Drone Simulation (3 Scenarios)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoDash - African Logistics Simulator</title>
   <link rel="stylesheet" href="S.style.css">
-
 </head>
 <body>
-<div class="wrap">
-  <canvas id="c" width="900" height="540"></canvas>
 
-  <div class="panel">
-    <div class="card">
-      <div class="row"><span class="pill">Drone Simulation</span></div>
-
-      <div class="row">
-        <label>Scenario</label>
-        <select id="scenario">
-          <option value="hover" selected>1) Takeoff + Hover (Stability Challenge)</option>
-          <option value="waypoints">2) Waypoint Navigation (Smooth Path + Wind)</option>
-          <option value="avoid">3) Obstacle Avoidance + Battery Landing</option>
-        </select>
+  <div id="gameContainer">
+    <!-- HUD Layer -->
+    <div id="hud">
+      <div class="hud-card">
+        <div>Battery</div>
+        <div class="battery-bar-container">
+          <div id="batteryFill" class="battery-bar-fill"></div>
+        </div>
+        <div id="batteryText" style="font-size: 0.75rem; margin-top:2px;">100%</div>
       </div>
-
-      <div class="row">
-        <button id="btnReset" class="secondary">Reset</button>
+      <div class="hud-card" style="text-align: center;">
+        <div>Altitude: <span id="altDisplay" style="color:#38bdf8;">0</span> m</div>
+        <div>Crosswinds: <span id="windDisplay" style="color:#f59e0b;">0</span> km/h</div>
       </div>
-      <div class="row">
-        <button id="btnPlay">Play</button>
-      </div>
-
-      <div class="hint">
-        For waypoints: click on the mini-map to place points.
-        <br/>Tip: Try wind and hover height sliders!
+      <div class="hud-card" style="text-align: right;">
+        <div>SCORE!: <span id="scoreDisplay" style="color:#4ade80;">0</span></div>
+        <div>HIGH SCORE!!: <span id="highScoreDisplay" style="color:#facc15;">0</span></div>
       </div>
     </div>
 
-    <div class="card" id="controlsCard"></div>
+    <!-- Canvas Engine -->
+    <canvas id="simCanvas" width="1000" height="650"></canvas>
 
-    <div class="card">
-      <div class="row"><label>Battery</label><div id="batteryText" class="pill">--%</div></div>
-      <div class="bar"><i id="batteryBar"></i></div>
-      <div class="row" style="margin-top:12px;">
-        <div class="pill" id="statusPill">Ready</div>
+    <!-- On-Screen Virtual Remote Control Interface -->
+    <div id="remoteControlContainer">
+      <div class="remote-header">FLIGHT CONTROLLER</div>
+      <div class="dpad-grid">
+        <div></div>
+        <button class="dpad-btn" id="btnUp">▲</button>
+        <div></div>
+        <button class="dpad-btn" id="btnLeft">◄</button>
+        <button class="dpad-btn center-btn" id="btnBrake">STOP</button>
+        <button class="dpad-btn" id="btnRight">►</button>
+        <div></div>
+        <button class="dpad-btn" id="btnDown">▼</button>
+        <div></div>
       </div>
-      <div class="hint" id="readout" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- In-Game Controls -->
+    <div id="inGameControls">
+      <button id="pauseBtn" class="btn-small">Pause (ESC)</button>
+      <button id="audioToggleBtn" class="btn-small">Sound: ON</button>
+    </div>
+
+    <!-- Player Selection Screen -->
+    <div id="playerSelectScreen" class="screen-overlay">
+      <h1>Select Your Pilot</h1>
+      <p>Choose a drone pilot configuration before taking off into the simulation zone.</p>
+      
+      <div class="pilot-grid">
+        <div class="pilot-card active" data-pilot="cadet">
+          <div class="pilot-icon" style="background:#38bdf8;">⚡</div>
+          <h3>Aero Cadet</h3>
+          <p class="pilot-desc">High speed & acceleration, but higher battery drain.</p>
+          <div class="stat-tag">Speed: +25%</div>
+        </div>
+
+        <div class="pilot-card" data-pilot="veteran">
+          <div class="pilot-icon" style="background:#0284c7;">🎯</div>
+          <h3>Logistics Veteran</h3>
+          <p class="pilot-desc">Balanced stats with standard battery consumption.</p>
+          <div class="stat-tag">Balanced</div>
+        </div>
+
+        <div class="pilot-card" data-pilot="hauler">
+          <div class="pilot-icon" style="background:#f59e0b;">🛡️</div>
+          <h3>Heavy Hauler</h3>
+          <p class="pilot-desc">High battery capacity, heavier drift handling.</p>
+          <div class="stat-tag">Battery Efficiency: +30%</div>
+        </div>
+      </div>
+
+      <button id="confirmPlayerBtn" class="btn" style="margin-top: 15px;">Confirm Pilot Selection</button>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="startScreen" class="screen-overlay hidden">
+      <h1>EcoDash</h1>
+      <p>Deliver critical medical supplies across harsh African terrain while managing heavy crosswinds, load-shedding zones, and battery reserves.</p>
+      
+      <div class="controls-hint">
+        <div><span>Remote Control / WASD / Arrows:</span> Steer & Dodge Obstacles</div>
+        <div><span>Navigation Line:</span> Follow green path indicator to next objective</div>
+        <div><span>Spacebar / STOP:</span> Air-Brake stabilization</div>
+      </div>
+
+      <button id="startBtn" class="btn">Launch simulation flight mode</button>
+    </div>
+
+    <!-- Pause Screen -->
+    <div id="pauseScreen" class="screen-overlay hidden">
+      <h2>Flight Mission Paused</h2>
+      <p>Drone hovering in holding pattern.</p>
+      <button id="resumeBtn" class="btn" style="margin-bottom: 10px;">Resume Flight</button>
+      <button id="restartPauseBtn" class="btn-small">Abort & Restart</button>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameOverScreen" class="screen-overlay hidden">
+      <h1 id="gameOverTitle" style="color:#ef4444;">Mission Failed</h1>
+      <p id="gameOverReason">Your drone ran out of battery and forced a hard crash landing.</p>
+      
+      <div class="hud-card" style="margin-bottom: 20px; font-size:1.1rem;">
+        Final Score: <span id="finalScoreDisplay" style="color:#4ade80;">0</span>
+      </div>
+
+      <button id="restartBtn" class="btn">Fly Again</button>
     </div>
   </div>
-</div>
 
-<script src="S.script.js">
-</script>
+  <script src="S.script.js"></script>
 </body>
 </html>
